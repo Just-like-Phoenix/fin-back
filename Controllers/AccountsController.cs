@@ -89,9 +89,8 @@ namespace fin_back.Controllers
 
             string? authToken = Request.Headers.Authorization.ToString();
             var user = await _userManager.FindByEmailAsync(AuthorizeValidation.GetTokenPayload(authToken).email);
-            string? userToken = await _userManager.GetAuthenticationTokenAsync(user, "fin-back", "access-token");
 
-            if (userToken != authToken) return Unauthorized();
+            if (user == null) return Unauthorized();
 
             user.RefreshToken = null;
             await _userManager.UpdateAsync(user);
