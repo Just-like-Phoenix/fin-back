@@ -1,4 +1,6 @@
-﻿namespace fin_back.Models.Indicators
+﻿using fin_back.Data.Entities;
+
+namespace fin_back.Models.Indicators
 {
     public class Indicators
     {

@@ -1,9 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace fin_back.Models.Indicators
+namespace fin_back.Data.Entities
 {
     public class LiquidityIndicators
     {
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public double CurrentLiquidity { get; set; }
         public double FastLiquidity { get; set; }
         public double FreeCashFlow { get; set; }

@@ -19,6 +19,7 @@ namespace fin_back.Data.Entities
         public string? OrgAddress { get; set;}
 
         [Required]
+        public Guid ApplicationUserId { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
     }
 }

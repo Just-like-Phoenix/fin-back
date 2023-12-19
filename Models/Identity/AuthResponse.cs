@@ -9,5 +9,6 @@
         public string MiddleName { get; set; } = null!;
         public string Token { get; set; } = null!;
         public string RefreshToken { get; set; } = null!;
+        public Guid UserId { get; set; }
     }
 }

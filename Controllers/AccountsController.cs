@@ -76,7 +76,8 @@ namespace fin_back.Controllers
                 LastName = user.LastName!, 
                 MiddleName = user.MiddleName!,
                 Token = accessToken,
-                RefreshToken = user.RefreshToken
+                RefreshToken = user.RefreshToken,
+                UserId = user.Id,
             });
         }
   

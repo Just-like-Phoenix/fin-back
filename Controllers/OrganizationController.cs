@@ -58,5 +58,41 @@ namespace fin_back.Controllers
 
             return Ok();
         }
+
+        [HttpPost("getByUser")]
+        public async Task<IActionResult> GetUserOrganizations()
+        {
+            if (!Request.Headers.ContainsKey("Authorization"))
+                return Unauthorized();
+
+            string? authToken = Request.Headers.Authorization.ToString();
+
+            if (AuthorizeValidation.TokenTimeValidation(authToken)) return Unauthorized();
+
+            var user = await _userManager.FindByEmailAsync(AuthorizeValidation.GetTokenPayload(authToken).email);
+            string? userToken = await _userManager.GetAuthenticationTokenAsync(user, "fin-back", "access-token");
+
+            if (userToken != authToken) return Unauthorized();
+
+            var organizations = _context.Organization.Where(org => org.ApplicationUser == user).ToList();
+
+            return Ok(organizations);
+        }
+
+        [HttpPost("getAll")]
+        public async Task<IActionResult> GetAllOrganizations()
+        {
+            var organizations = _context.Organization.ToList();
+
+            return Ok(organizations);
+        }
+
+        [HttpGet("getByRegNum")]
+        public async Task<IActionResult> GetOrganizationByRegNum(string RegNum)
+        {
+            var organizations = _context.Organization.Where(org => org.RegNum == Convert.ToInt32(RegNum)).ToList();
+
+            return Ok(organizations);
+        }
     }
 }

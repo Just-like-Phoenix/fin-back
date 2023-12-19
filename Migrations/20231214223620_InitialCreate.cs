@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace fin_back.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -77,6 +77,54 @@ namespace fin_back.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FinancialIndicators",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Leverage = table.Column<double>(type: "double", nullable: false),
+                    CoverageRatio = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FinancialIndicators", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "LiquidityIndicators",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CurrentLiquidity = table.Column<double>(type: "double", nullable: false),
+                    FastLiquidity = table.Column<double>(type: "double", nullable: false),
+                    FreeCashFlow = table.Column<double>(type: "double", nullable: false),
+                    AccountsRecTurnover = table.Column<double>(type: "double", nullable: false),
+                    ReservesTurnover = table.Column<double>(type: "double", nullable: false),
+                    AccountsPayTurnover = table.Column<double>(type: "double", nullable: false),
+                    FinancialCycle = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LiquidityIndicators", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ProfitabilityIndicators",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ReturnOnAssets = table.Column<double>(type: "double", nullable: false),
+                    ReturnOnEquity = table.Column<double>(type: "double", nullable: false),
+                    ReturnOnInvestment = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfitabilityIndicators", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -242,21 +290,36 @@ namespace fin_back.Migrations
                 {
                     Year = table.Column<int>(type: "int", nullable: false),
                     RegNum = table.Column<int>(type: "int", nullable: false),
-                    BalanceFile = table.Column<byte[]>(type: "longblob", nullable: true),
-                    ProfitNLossFile = table.Column<byte[]>(type: "longblob", nullable: true),
-                    CashFlowFile = table.Column<byte[]>(type: "longblob", nullable: true),
-                    FinancialIndicators = table.Column<string>(type: "json", nullable: true),
-                    LiquidityIndicators = table.Column<string>(type: "json", nullable: true),
-                    ProfitabilityIndicators = table.Column<string>(type: "json", nullable: true)
+                    LiquidityIndicatorsId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    FinancialIndicatorsId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ProfitabilityIndicatorsId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrganizationIndicators", x => new { x.Year, x.RegNum });
                     table.ForeignKey(
+                        name: "FK_OrganizationIndicators_FinancialIndicators_FinancialIndicato~",
+                        column: x => x.FinancialIndicatorsId,
+                        principalTable: "FinancialIndicators",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizationIndicators_LiquidityIndicators_LiquidityIndicato~",
+                        column: x => x.LiquidityIndicatorsId,
+                        principalTable: "LiquidityIndicators",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_OrganizationIndicators_Organization_RegNum",
                         column: x => x.RegNum,
                         principalTable: "Organization",
                         principalColumn: "RegNum",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizationIndicators_ProfitabilityIndicators_Profitability~",
+                        column: x => x.ProfitabilityIndicatorsId,
+                        principalTable: "ProfitabilityIndicators",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -266,8 +329,8 @@ namespace fin_back.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "8e8056e6-206d-49d1-a353-36147b9370b9", null, "Member", "MEMBER" },
-                    { "e9ad01f6-c8ad-4db4-9a88-5c8cb13b81a1", null, "Administrator", "ADMINISTRATOR" }
+                    { "11f588ca-3c9f-4394-83c1-74b8923893cf", null, "Administrator", "ADMINISTRATOR" },
+                    { "40fc3fb7-c7e6-4348-a83a-15bdc50139d5", null, "Member", "MEMBER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -313,6 +376,21 @@ namespace fin_back.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrganizationIndicators_FinancialIndicatorsId",
+                table: "OrganizationIndicators",
+                column: "FinancialIndicatorsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganizationIndicators_LiquidityIndicatorsId",
+                table: "OrganizationIndicators",
+                column: "LiquidityIndicatorsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganizationIndicators_ProfitabilityIndicatorsId",
+                table: "OrganizationIndicators",
+                column: "ProfitabilityIndicatorsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrganizationIndicators_RegNum",
                 table: "OrganizationIndicators",
                 column: "RegNum");
@@ -343,7 +421,16 @@ namespace fin_back.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "FinancialIndicators");
+
+            migrationBuilder.DropTable(
+                name: "LiquidityIndicators");
+
+            migrationBuilder.DropTable(
                 name: "Organization");
+
+            migrationBuilder.DropTable(
+                name: "ProfitabilityIndicators");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

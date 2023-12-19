@@ -48,13 +48,13 @@ namespace fin_back.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8e8056e6-206d-49d1-a353-36147b9370b9",
+                            Id = "40fc3fb7-c7e6-4348-a83a-15bdc50139d5",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "e9ad01f6-c8ad-4db4-9a88-5c8cb13b81a1",
+                            Id = "11f588ca-3c9f-4394-83c1-74b8923893cf",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -242,6 +242,55 @@ namespace fin_back.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("fin_back.Data.Entities.FinancialIndicators", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("CoverageRatio")
+                        .HasColumnType("double");
+
+                    b.Property<double>("Leverage")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FinancialIndicators");
+                });
+
+            modelBuilder.Entity("fin_back.Data.Entities.LiquidityIndicators", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("AccountsPayTurnover")
+                        .HasColumnType("double");
+
+                    b.Property<double>("AccountsRecTurnover")
+                        .HasColumnType("double");
+
+                    b.Property<double>("CurrentLiquidity")
+                        .HasColumnType("double");
+
+                    b.Property<double>("FastLiquidity")
+                        .HasColumnType("double");
+
+                    b.Property<double>("FinancialCycle")
+                        .HasColumnType("double");
+
+                    b.Property<double>("FreeCashFlow")
+                        .HasColumnType("double");
+
+                    b.Property<double>("ReservesTurnover")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LiquidityIndicators");
+                });
+
             modelBuilder.Entity("fin_back.Data.Entities.Organization", b =>
                 {
                     b.Property<int?>("RegNum")
@@ -283,20 +332,46 @@ namespace fin_back.Migrations
                     b.Property<int>("RegNum")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("BalanceFile")
-                        .HasColumnType("longblob");
+                    b.Property<Guid>("FinancialIndicatorsId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("CashFlowFile")
-                        .HasColumnType("longblob");
+                    b.Property<Guid>("LiquidityIndicatorsId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("ProfitNLossFile")
-                        .HasColumnType("longblob");
+                    b.Property<Guid>("ProfitabilityIndicatorsId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Year", "RegNum");
+
+                    b.HasIndex("FinancialIndicatorsId");
+
+                    b.HasIndex("LiquidityIndicatorsId");
+
+                    b.HasIndex("ProfitabilityIndicatorsId");
 
                     b.HasIndex("RegNum");
 
                     b.ToTable("OrganizationIndicators");
+                });
+
+            modelBuilder.Entity("fin_back.Data.Entities.ProfitabilityIndicators", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("ReturnOnAssets")
+                        .HasColumnType("double");
+
+                    b.Property<double>("ReturnOnEquity")
+                        .HasColumnType("double");
+
+                    b.Property<double>("ReturnOnInvestment")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProfitabilityIndicators");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -363,101 +438,29 @@ namespace fin_back.Migrations
 
             modelBuilder.Entity("fin_back.Data.Entities.OrganizationIndicators", b =>
                 {
+                    b.HasOne("fin_back.Data.Entities.FinancialIndicators", "FinancialIndicators")
+                        .WithMany()
+                        .HasForeignKey("FinancialIndicatorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("fin_back.Data.Entities.LiquidityIndicators", "LiquidityIndicators")
+                        .WithMany()
+                        .HasForeignKey("LiquidityIndicatorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("fin_back.Data.Entities.ProfitabilityIndicators", "ProfitabilityIndicators")
+                        .WithMany()
+                        .HasForeignKey("ProfitabilityIndicatorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("fin_back.Data.Entities.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("RegNum")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("fin_back.Models.Indicators.FinancialIndicators", "FinancialIndicators", b1 =>
-                        {
-                            b1.Property<int>("OrganizationIndicatorsYear")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("OrganizationIndicatorsRegNum")
-                                .HasColumnType("int");
-
-                            b1.Property<double>("CoverageRatio")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("Leverage")
-                                .HasColumnType("double");
-
-                            b1.HasKey("OrganizationIndicatorsYear", "OrganizationIndicatorsRegNum");
-
-                            b1.ToTable("OrganizationIndicators");
-
-                            b1.ToJson("FinancialIndicators");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrganizationIndicatorsYear", "OrganizationIndicatorsRegNum");
-                        });
-
-                    b.OwnsOne("fin_back.Models.Indicators.LiquidityIndicators", "LiquidityIndicators", b1 =>
-                        {
-                            b1.Property<int>("OrganizationIndicatorsYear")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("OrganizationIndicatorsRegNum")
-                                .HasColumnType("int");
-
-                            b1.Property<double>("AccountsPayTurnover")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("AccountsRecTurnover")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("CurrentLiquidity")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("FastLiquidity")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("FinancialCycle")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("FreeCashFlow")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("ReservesTurnover")
-                                .HasColumnType("double");
-
-                            b1.HasKey("OrganizationIndicatorsYear", "OrganizationIndicatorsRegNum");
-
-                            b1.ToTable("OrganizationIndicators");
-
-                            b1.ToJson("LiquidityIndicators");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrganizationIndicatorsYear", "OrganizationIndicatorsRegNum");
-                        });
-
-                    b.OwnsOne("fin_back.Models.Indicators.ProfitabilityIndicators", "ProfitabilityIndicators", b1 =>
-                        {
-                            b1.Property<int>("OrganizationIndicatorsYear")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("OrganizationIndicatorsRegNum")
-                                .HasColumnType("int");
-
-                            b1.Property<double>("ReturnOnAssets")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("ReturnOnEquity")
-                                .HasColumnType("double");
-
-                            b1.Property<double>("ReturnOnInvestment")
-                                .HasColumnType("double");
-
-                            b1.HasKey("OrganizationIndicatorsYear", "OrganizationIndicatorsRegNum");
-
-                            b1.ToTable("OrganizationIndicators");
-
-                            b1.ToJson("ProfitabilityIndicators");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrganizationIndicatorsYear", "OrganizationIndicatorsRegNum");
-                        });
 
                     b.Navigation("FinancialIndicators");
 

@@ -37,12 +37,12 @@ namespace fin_back.Data
                 new IdentityRole<Guid> { Id = Guid.NewGuid(), Name = "Administrator", NormalizedName = "ADMINISTRATOR" }
             );
 
-            builder.Entity<OrganizationIndicators>(b =>
+            /*builder.Entity<OrganizationIndicators>(b =>
             {
                 b.OwnsOne<LiquidityIndicators>(u => u.LiquidityIndicators, builder => { builder.ToJson(); });
                 b.OwnsOne<FinancialIndicators>(u => u.FinancialIndicators, builder => { builder.ToJson(); });
                 b.OwnsOne<ProfitabilityIndicators>(u => u.ProfitabilityIndicators, builder => { builder.ToJson(); });
-            });
+            });*/
         }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -52,5 +52,8 @@ namespace fin_back.Data
 
         public DbSet<Organization> Organization { get; set; } = null!;
         public DbSet<OrganizationIndicators> OrganizationIndicators { get; set; } = null!;
+        public DbSet<LiquidityIndicators> LiquidityIndicators { get; set; } = null!;
+        public DbSet<ProfitabilityIndicators> ProfitabilityIndicators { get; set; } = null!;
+        public DbSet<FinancialIndicators> FinancialIndicators { get; set; } = null!;
     }
 }

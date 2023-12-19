@@ -18,13 +18,14 @@ namespace fin_back.Data.Entities
         public int RegNum { get; set; }
         public Organization? Organization { get; set; }
 
-        public byte[]? BalanceFile { get; set; }
-        public byte[]? ProfitNLossFile { get; set; }
-        public byte[]? CashFlowFile { get; set; }
+        public Guid LiquidityIndicatorsId { get; set; }
+        public LiquidityIndicators? LiquidityIndicators { get; set; }
 
-        public LiquidityIndicators? LiquidityIndicators { get; set; } = null!;
-        public FinancialIndicators? FinancialIndicators { get; set; } = null!;
-        public ProfitabilityIndicators? ProfitabilityIndicators { get; set; } = null!;
+        public Guid FinancialIndicatorsId { get; set; }
+        public FinancialIndicators? FinancialIndicators { get; set; }
+        
+        public Guid ProfitabilityIndicatorsId { get; set; }
+        public ProfitabilityIndicators? ProfitabilityIndicators { get; set; }
     }
 }
 

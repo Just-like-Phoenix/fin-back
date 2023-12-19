@@ -10,6 +10,5 @@ namespace fin_back.Models.Organization
         public string? OrgName { get; set; }
         public string? OrgEmail { get; set; }
         public string? OrgAddress { get; set; }
-        public string Email { get; set; } = null!;
     }
 }
